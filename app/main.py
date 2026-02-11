@@ -9,6 +9,9 @@ def move_file(command: str) -> int:
 
     cmd, src, dest = args
 
+    if cmd != "mv":
+        return 1
+
     source_path = os.path.abspath(src)
     source_file = os.path.basename(source_path)
 
@@ -20,5 +23,12 @@ def move_file(command: str) -> int:
 
     os.makedirs(parent_dir, exist_ok=True)
 
-    if cmd != "mv":
-        return 1
+    with open(source_path, "r") as source_file:
+        content = source_file.read()
+
+    with open(dest_path, "w") as dest_file:
+        dest_file.write(content)
+
+    os.remove(source_path)
+
+    return 0
