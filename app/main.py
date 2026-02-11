@@ -1,29 +1,24 @@
 import os
-import shutil
 
 
 def move_file(command: str) -> int:
 
     args = command.split(" ")
-
     if len(args) != 3:
         return 1
 
-    if args[0] != "mv":
+    cmd, src, dest = args
+
+    source_path = os.path.abspath(src)
+    source_file = os.path.basename(source_path)
+
+    if dest.endswith("\\") or dest.endswith("/"):
+        dest += source_file
+
+    dest_path = os.path.abspath(dest)
+    parent_dir = os.path.dirname(dest_path)
+
+    os.makedirs(parent_dir, exist_ok=True)
+
+    if cmd != "mv":
         return 1
-
-    source_path = os.path.abspath(args[1])
-    source_file = source_path.split("/")[-1]
-
-    if args[2].endswith("/"):
-        args[2] += source_file
-
-    dest_path = os.path.abspath(args[2])
-
-    try:
-        os.makedirs(dest_path.rstrip(args[2]), exist_ok=True)
-        shutil.move(source_path, dest_path)
-    except OSError:
-        return 1
-    else:
-        return 0
